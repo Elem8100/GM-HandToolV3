@@ -1,4 +1,4 @@
-# WzComparerR2
+# GM-HandTool V3
 
 ![alt tag](https://imgur.com/VLHlzn3.jpeg"")  
 
