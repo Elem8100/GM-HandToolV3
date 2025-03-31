@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net462;net6.0-windows;net8.0-windows</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>WzComparerR2.LuaConsole</AssemblyName>
+    <RootNamespace>WzComparerR2.LuaConsole</RootNamespace>
+    <IsPublishable>false</IsPublishable>
+    <WcR2Plugin>true</WcR2Plugin>
+  </PropertyGroup>
+  <Import Project="$(ProjectDir)..\Build\Common.props" />
+  <PropertyGroup Condition="$(DotnetEdition) == 'core'">
+
+  </PropertyGroup>
+  <PropertyGroup Condition="$(DotnetEdition) == 'framework'">
+    <!-- don't export native lua54.dll-->
+    <PreferredNativeLua>NONE</PreferredNativeLua>
+  </PropertyGroup>
+  <ItemGroup Condition="$(DotnetEdition) == 'core'">
+
+  </ItemGroup>
+  <ItemGroup Condition="$(DotnetEdition) == 'framework'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WzComparerR2.Common\WzComparerR2.Common.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\WzComparerR2.PluginBase\WzComparerR2.PluginBase.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\WzComparerR2.WzLib\WzComparerR2.WzLib.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
+    <Reference Include="DevComponents.DotNetBar2">
+      <HintPath>..\References\DevComponents.DotNetBar2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <PackageReference Include="ICSharpCode.TextEditor" Version="3.2.1.6466" NoWarn="NU1701"/>
+    <PackageReference Include="KeraLua" Version="1.4.1" GeneratePathProperty="true" />
+    <PackageReference Include="NLua" Version="1.7.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\SharpLua.xshd" />
+    <None Include="Lua\CLRPackage.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup Condition="Exists('..\Build\CommonAssemblyInfo.cs')">
+    <Compile Include="..\Build\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Target Name="PostBuildNet6" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Windows')) and $(DotnetEdition) == 'core'">
+    <Exec Command="xcopy &quot;$(PkgKeraLua)\runtimes\win-x86\native\*.dll&quot; &quot;$(TargetDir)x86&quot; /I /Y" />
+    <Exec Command="xcopy &quot;$(PkgKeraLua)\runtimes\win-x64\native\*.dll&quot; &quot;$(TargetDir)x64&quot; /I /Y" />
+  </Target>
+  <Import Project="$(ProjectDir)..\Build\WcR2Plugin.targets" />
+</Project>
