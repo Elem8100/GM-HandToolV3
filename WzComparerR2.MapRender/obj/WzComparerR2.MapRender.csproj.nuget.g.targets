@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Condition=" '$(TargetFramework)' == 'net462' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)monogame.framework.windowsdx\3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('$(NuGetPackageRoot)monogame.framework.windowsdx\3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />
+    <Import Project="$(NuGetPackageRoot)system.resources.extensions\8.0.0\buildTransitive\net462\System.Resources.Extensions.targets" Condition="Exists('$(NuGetPackageRoot)system.resources.extensions\8.0.0\buildTransitive\net462\System.Resources.Extensions.targets')" />
+  </ImportGroup>
+  <ImportGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)monogame.framework.windowsdx\3.8.1.303\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('$(NuGetPackageRoot)monogame.framework.windowsdx\3.8.1.303\build\MonoGame.Framework.WindowsDX.targets')" />
+  </ImportGroup>
+  <ImportGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)monogame.framework.windowsdx\3.8.2.1105\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('$(NuGetPackageRoot)monogame.framework.windowsdx\3.8.2.1105\build\MonoGame.Framework.WindowsDX.targets')" />
+  </ImportGroup>
+</Project>
