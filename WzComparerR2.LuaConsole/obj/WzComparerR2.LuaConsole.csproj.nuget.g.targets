@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Condition=" '$(TargetFramework)' == 'net462' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)keralua\1.4.1\build\net46\KeraLua.targets" Condition="Exists('$(NuGetPackageRoot)keralua\1.4.1\build\net46\KeraLua.targets')" />
+  </ImportGroup>
+</Project>
