@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net462;net6.0-windows;net8.0-windows</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>WzComparerR2.MapRender</AssemblyName>
+    <RootNamespace>WzComparerR2.MapRender</RootNamespace>
+    <IsPublishable>false</IsPublishable>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <WcR2Plugin>true</WcR2Plugin>
+  </PropertyGroup>
+  <Import Project="$(ProjectDir)..\Build\Common.props" />
+  <PropertyGroup Condition="$(DotnetEdition) == 'core'">
+
+  </PropertyGroup>
+  <PropertyGroup Condition="$(DotnetEdition) == 'framework'">
+    
+  </PropertyGroup>
+  <ItemGroup Condition="$(DotnetEdition) == 'core'">
+    
+  </ItemGroup>
+  <ItemGroup Condition="$(DotnetEdition) == 'framework'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WzComparerR2.Common\WzComparerR2.Common.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\WzComparerR2.PluginBase\WzComparerR2.PluginBase.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\WzComparerR2.WzLib\WzComparerR2.WzLib.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\CharaSimResource\CharaSimResource.csproj">
+      <Private>false</Private>
+      <ExcludeAssets>all</ExcludeAssets>
+    </ProjectReference>
+    <Reference Include="DevComponents.DotNetBar2">
+      <HintPath>..\References\DevComponents.DotNetBar2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface">
+      <HintPath>..\References\EmptyKeys.UserInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Core">
+      <HintPath>..\References\EmptyKeys.UserInterface.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.MonoGame">
+      <HintPath>..\References\EmptyKeys.UserInterface.MonoGame.dll</HintPath>
+    </Reference>
+    <Reference Include="IMEHelper">
+      <HintPath>..\References\IMEHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="spine-monogame">
+      <HintPath>..\References\spine-monogame.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="$(MonogameFrameworkVersion)" ExcludeAssets="runtime" />
+    <PackageReference Include="ManagedBass" Version="3.1.1" ExcludeAssets="runtime" />
+    <PackageReference Include="SharpDX" Version="$(SharpDXVersion)" ExcludeAssets="runtime" />
+    <PackageReference Include="SharpDX.RawInput" Version="$(SharpDXVersion)" NoWarn="NU1701" />
+    <PackageReference Include="System.Resources.Extensions" Version="$(SystemResourcesExtensionsVersion)" ExcludeAssets="runtime" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('..\Build\CommonAssemblyInfo.cs')">
+    <Compile Include="..\Build\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(ProjectDir)..\Build\WcR2Plugin.targets" />
+</Project>
