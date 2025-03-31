@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net462;net6.0-windows;net8.0-windows</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>WzComparerR2.Common</AssemblyName>
+    <RootNamespace>WzComparerR2</RootNamespace>
+    <IsPublishable>false</IsPublishable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <Import Project="$(ProjectDir)..\Build\Common.props" />
+  <PropertyGroup Condition="$(DotnetEdition) == 'core'">
+  </PropertyGroup>
+  <PropertyGroup Condition="$(DotnetEdition) == 'framework'">
+  </PropertyGroup>
+  <ItemGroup Condition="$(DotnetEdition) == 'core'">
+  </ItemGroup>
+  <ItemGroup Condition="$(DotnetEdition) == 'framework'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WzComparerR2.WzLib\WzComparerR2.WzLib.csproj" />
+    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="$(MonogameFrameworkVersion)" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ImageManipulation">
+      <HintPath>..\References\ImageManipulation.dll</HintPath>
+    </Reference>
+    <Reference Include="spine-monogame">
+      <HintPath>..\References\spine-monogame.dll</HintPath>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar2">
+      <HintPath>..\References\DevComponents.DotNetBar2.dll</HintPath>
+    </Reference>
+    <!-- force upgrading SharpDX -->
+    <PackageReference Include="SharpDX" Version="$(SharpDXVersion)" />
+    <PackageReference Include="SharpDX.Direct2D1" Version="$(SharpDXVersion)" />
+    <PackageReference Include="SharpDX.Direct3D11" Version="$(SharpDXVersion)" />
+    <PackageReference Include="SharpDX.DXGI" Version="$(SharpDXVersion)" />
+    <PackageReference Include="SharpDX.Mathematics" Version="$(SharpDXVersion)" />
+    <PackageReference Include="SharpDX.MediaFoundation" Version="$(SharpDXVersion)" />
+    <PackageReference Include="SharpDX.XAudio2" Version="$(SharpDXVersion)" />
+    <PackageReference Include="SharpDX.XInput" Version="$(SharpDXVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Rendering\Effect\PngEffect.$(MonogameFrameworkVersion).mgfxo" LogicalName="WzComparerR2.Rendering.Effect.PngEffect.mgfxo" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('..\Build\CommonAssemblyInfo.cs')">
+    <Compile Include="..\Build\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Windows')) AND !Exists('$(ProjectDir)\Rendering\Effect\PngEffect.$(MonogameFrameworkVersion).mgfxo')">
+    <Exec Command="EffectCompiler.bat $(MonogameFrameworkVersion)" WorkingDirectory="$(ProjectDir)Rendering\Effect" />
+  </Target>
+</Project>
