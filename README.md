@@ -1,5 +1,9 @@
 # WzComparerR2
-- A new repository which is based off Spadow's source code, and forked from KENNYSOFT's repository.
+
+![alt tag](https://imgur.com/VLHlzn3.jpeg"")  
+
+![alt tag](https://imgur.com/JN0c1ft.jpeg"")     
+ 
 
 # Modules
 - **WzComparerR2** 主程序
