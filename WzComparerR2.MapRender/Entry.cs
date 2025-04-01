@@ -41,10 +41,11 @@ namespace WzComparerR2.MapRender
             bar.Items.Add(btnItemMapRender);
 #endif
 
-            this.bar2 = Context.AddRibbonBar("Modules", "MapRender2");
-            btnItemMapRenderV2 = new ButtonItem("", "MapRenderV2");
-            btnItemMapRenderV2.Click += btnItem_Click;
-            bar2.Items.Add(btnItemMapRenderV2);
+          //  this.bar2 = Context.AddRibbonBar("Modules", "MapRender2");
+          //  btnItemMapRenderV2 = new ButtonItem("", "MapRenderV2");
+         //   btnItemMapRenderV2.Click += btnItem_Click;
+           
+         //   bar2.Items.Add(btnItemMapRenderV2);
 
             ConfigManager.RegisterAllSection();
         }

@@ -49,8 +49,8 @@ namespace WzComparerR2.MapRender
             this.patchVisibility.IlluminantClusterPathVisible = false;
             this.patchVisibility.SpringPortalPathVisible = false;
 
-             var form = Form.FromHandle(this.Window.Handle) as Form;
-          //  form = Form.FromHandle(this.Window.Handle) as Form;
+           //  var form = Form.FromHandle(this.Window.Handle) as Form;
+            form = Form.FromHandle(this.Window.Handle) as Form;
             form.Load += Form_Load;
             form.GotFocus += Form_GotFocus;
             form.LostFocus += Form_LostFocus;
