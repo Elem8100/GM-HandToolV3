@@ -28,17 +28,10 @@ namespace WzComparerR2.Animation
             this.AtlasRect = atlasRect;
         }
 
-        public Frame(Texture2D texture, Point origin, int z, int delay, bool blend) : this(texture)
-        {
-            this.Origin = origin;
-            this.Z = z;
-            this.Delay = delay;
-            this.Blend = blend;
-        }
-
         public Texture2D Texture { get; set; }
         public Rectangle? AtlasRect { get; set; }
         public Wz_Png Png { get; set; }
+        public int Page { get; set; }
         public Point Origin { get; set; }
         public int Z { get; set; }
         public int Delay { get; set; }
@@ -119,7 +112,7 @@ namespace WzComparerR2.Animation
 
                 if (frame.Delay == 0)
                 {
-                    frame.Delay = 120; // Default delay
+                    frame.Delay = 120;//给予默认delay
                 }
                 return frame;
             }
