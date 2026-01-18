@@ -12,7 +12,7 @@ namespace WzComparerR2.Rendering
     public class AnimationGraphics
     {
         public AnimationGraphics(GraphicsDevice graphicsDevice)
-            : this(graphicsDevice, new SpriteBatch(graphicsDevice))
+            : this (graphicsDevice, new SpriteBatch(graphicsDevice))
         {
         }
 
@@ -72,30 +72,5 @@ namespace WzComparerR2.Rendering
             animator.Render(spineRenderer);
             spineRenderer.End();
         }
-
-        public void Draw(MultiFrameAnimator animator, Matrix world)
-        {
-            Frame frame = animator.CurrentFrame;
-            if (frame != null && frame.Texture != null)
-            {
-                if (animator.Position != Point.Zero)
-                {
-                    world *= Matrix.CreateTranslation(animator.Position.X, animator.Position.Y, 0);
-                }
-
-                sprite.Begin(SpriteSortMode.Deferred, this.blendState, transformMatrix: world);
-                sprite.Draw(frame.Texture,
-                    Vector2.Zero,
-                    frame.AtlasRect,
-                    new Color(Color.White, frame.A0),
-                    0,
-                    frame.Origin.ToVector2(),
-                    1,
-                    SpriteEffects.None,
-                    0);
-                sprite.End();
-            }
-        }
-
     }
 }

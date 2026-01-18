@@ -38,7 +38,7 @@ namespace WzComparerR2.Rendering
             this.context = D2DFactory.Instance.GetContext(this.GraphicsDevice);
             if (this.context == null)
             {
-                throw new Exception("Failed to create D2D context.");
+                throw new Exception("Create D2D context failed.");
             }
             this.context.D2DRenderTarget.Transform = transform;
             this.context.D2DRenderTarget.BeginDraw();

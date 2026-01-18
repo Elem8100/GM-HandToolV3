@@ -16,7 +16,6 @@ namespace WzComparerR2.Rendering
             this.AlphaMixEnabled = false;
             this.MinMixedAlpha = 255;
             this.MixedColor = Color.White;
-            this.Overlay = false;
         }
 
         public bool AlphaMixEnabled
@@ -41,21 +40,7 @@ namespace WzComparerR2.Rendering
             set { this.Parameters["mixedColor"].SetValue(value.ToVector4()); }
         }
 
-        public bool Overlay
-        {
-            get { return overlay_; }
-            set
-            {
-                if (value)
-                {
-                    this.CurrentTechnique = this.Techniques["techov"];
-                }
-                this.overlay_ = value;
-            }
-        }
-
         private bool alphaMixed;
-        private bool overlay_;
 
         private static byte[] GetEffectCode()
         {

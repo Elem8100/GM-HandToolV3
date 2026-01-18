@@ -11,8 +11,6 @@ namespace WzComparerR2.Rendering
 {
     public static class MonogameUtils
     {
-        internal const SharpDX.DXGI.Format DXGI_FORMAT_B4G4R4A4_UNORM = (SharpDX.DXGI.Format)115;
-
         public static Color ToXnaColor(this GdipColor color)
         {
             return new Color(color.R, color.G, color.B, color.A);
@@ -70,19 +68,45 @@ namespace WzComparerR2.Rendering
             texture.SetData(0, 0, new Rectangle(origin.X, origin.Y, rect.Width, rect.Height), buffer, 0, buffer.Length);
         }
 
-        public static void BgraToColor(byte[] pixelData)
-        {
-            for (int i = 0; i < pixelData.Length; i += 4)
-            {
-                byte temp = pixelData[i];
-                pixelData[i] = pixelData[i + 2];
-                pixelData[i + 2] = temp;
-            }
-        }
-
         public static Device _d3dDevice(this GraphicsDevice device)
         {
             return (Device)device.Handle;
+        }
+
+        public static DeviceContext _d3dContext(this GraphicsDevice device)
+        {
+            var d3dContextField = typeof(GraphicsDevice).GetField("_d3dContext", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            return (DeviceContext)d3dContextField.GetValue(device);
+        }
+
+        public static SharpDX.DXGI.SwapChain _swapChain(this GraphicsDevice device)
+        {
+            var _swapChainField = typeof(GraphicsDevice).GetField("_swapChain", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            return (SharpDX.DXGI.SwapChain)_swapChainField.GetValue(device);
+        }
+
+        public static Resource GetTexture(this Texture texture)
+        {
+            var _getTextureFunc = typeof(Texture).GetMethod("GetTexture", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            return (Resource)_getTextureFunc.Invoke(texture, Array.Empty<object>());
+        }
+
+        public static void CopyBackBuffer(this GraphicsDevice graphicsDevice, Texture2D destTexture)
+        {
+            var pp = graphicsDevice.PresentationParameters;
+            if (pp.BackBufferWidth != destTexture.Width || pp.BackBufferHeight != destTexture.Height || pp.BackBufferFormat != destTexture.Format)
+            {
+                throw new Exception("Destination texture size or format does not compatible with back buffer.");
+            }
+
+            var d3dContext = graphicsDevice._d3dContext();
+            var swapChain = graphicsDevice._swapChain();
+            var dest = destTexture.GetTexture();
+            using SharpDX.Direct3D11.Texture2D source = SharpDX.Direct3D11.Resource.FromSwapChain<SharpDX.Direct3D11.Texture2D>(swapChain, 0);
+            lock (d3dContext)
+            {
+                d3dContext.CopyResource(source, dest);
+            }
         }
 
         public static bool IsSupportFormat(this GraphicsDevice device, SharpDX.DXGI.Format format)
@@ -94,7 +118,7 @@ namespace WzComparerR2.Rendering
 
         public static bool IsSupportBgra4444(this GraphicsDevice device)
         {
-            return device.IsSupportFormat(DXGI_FORMAT_B4G4R4A4_UNORM);
+            return device.IsSupportFormat(SharpDX.DXGI.Format.B4G4R4A4_UNorm);
         }
 
         public static bool IsSupportBgr565(this GraphicsDevice device)
