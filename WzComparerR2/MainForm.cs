@@ -645,16 +645,16 @@ namespace WzComparerR2
 
             if (node.Value is Wz_Png)
             {
-                var pngFrameData = this.pictureBoxEx1.LoadPngFrameAnimation(node);
-
-                if (pngFrameData != null)
+               // var png FrameData = this.pictureBoxEx1.LoadPngFrameAnimation(node);
+               /*
+                if (png//FrameData != null)
                 {
                     this.pictureBoxEx1.ShowOverlayAnimation(pngFrameData, true);
                     this.cmbItemAniNames.Items.Clear();
                     this.cmbItemSkins.Visible = false;
                     this.pictureBoxEx1.PictureName = aniName;
                 }
-
+               */
                 return;
             }
 
@@ -754,19 +754,24 @@ namespace WzComparerR2
 
         private void buttonDisableOverlayAni_Click(object sender, EventArgs e)
         {
+          /*
             if (this.pictureBoxEx1.ShowOverlayAni)
             {
                 this.pictureBoxEx1.ShowOverlayAni = false;
                 this.pictureBoxEx1.Items.Clear();
             }
+
+            */
         }
 
         private void buttonOverlayRect_Click(object sender, EventArgs e)
         {
+           /*
             if (this.pictureBoxEx1.ShowOverlayAni)
             {
                 this.pictureBoxEx1.AddOverlayRect();
             }
+           */
         }
 
         private void buttonItemAutoSave_Click(object sender, EventArgs e)
@@ -802,7 +807,7 @@ namespace WzComparerR2
             var aniItem = this.pictureBoxEx1.Items[0];
             var frameData = (aniItem as FrameAnimator)?.Data;
             if (frameData != null && frameData.Frames.Count == 1
-                && frameData.Frames[0].A0 == 255 && frameData.Frames[0].A1 == 255 && (frameData.Frames[0].Delay == 0 || pictureBoxEx1.ShowOverlayAni))
+                && frameData.Frames[0].A0 == 255 && frameData.Frames[0].A1 == 255 && (frameData.Frames[0].Delay == 0 ))
             {
                 // save still picture as png
                 this.OnSavePngFile(frameData.Frames[0]);
@@ -844,7 +849,7 @@ namespace WzComparerR2
                 }
                 labelItemStatus.Text = "Image saved: " + pngFileName;
             }
-            else if (pictureBoxEx1.ShowOverlayAni && frame.Texture != null) // 애니메이션 중첩
+            else if (frame.Texture != null) // 애니메이션 중첩
             {
                 var config = ImageHandlerConfig.Default;
                 string pngFileName = pictureBoxEx1.PictureName + ".png";
@@ -3727,7 +3732,7 @@ namespace WzComparerR2
                     comparer.OutputAddedImg = chkOutputAddedImg.Checked;
                     comparer.OutputRemovedImg = chkOutputRemovedImg.Checked;
                     comparer.EnableDarkMode = chkEnableDarkMode.Checked;
-                    comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
+                   // comparer.OutputSkillTooltip = chkOutputSkillTooltip.Checked;
                     comparer.HashPngFileName = chkHashPngFileName.Checked;
                     comparer.StateInfoChanged += new EventHandler(comparer_StateInfoChanged);
                     comparer.StateDetailChanged += new EventHandler(comparer_StateDetailChanged);

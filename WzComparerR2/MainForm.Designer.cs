@@ -1929,7 +1929,7 @@
             this.pictureBoxEx1.Name = "pictureBoxEx1";
             this.pictureBoxEx1.PictureName = null;
             this.pictureBoxEx1.ShowInfo = true;
-            this.pictureBoxEx1.ShowOverlayAni = false;
+           // this.pictureBoxEx1.ShowOverlayAni = false;
             this.pictureBoxEx1.ShowPositionGridOnDrag = true;
             this.pictureBoxEx1.Size = new System.Drawing.Size(292, 92);
             this.pictureBoxEx1.TabIndex = 7;
