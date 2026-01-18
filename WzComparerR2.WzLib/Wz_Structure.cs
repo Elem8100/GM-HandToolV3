@@ -11,18 +11,18 @@ namespace WzComparerR2.WzLib
         public Wz_Structure()
         {
             this.wz_files = new List<Wz_File>();
-            this.ms_files = new List<Ms_File>();
+            this.ms_files = new List<IMapleStoryFile>();
             this.encryption = new Wz_Crypto();
             this.img_number = 0;
             this.has_basewz = false;
             this.TextEncoding = Wz_Structure.DefaultEncoding;
             this.AutoDetectExtFiles = Wz_Structure.DefaultAutoDetectExtFiles;
             this.ImgCheckDisabled = Wz_Structure.DefaultImgCheckDisabled;
-            this.WzVersionVerifyMode = Wz_Structure.DefaultWzVersionVerifyMode;
+            this.WzVersionVerifyMode = WzVersionVerifyMode.Fast; //Wz_Structure.DefaultWzVersionVerifyMode;
         }
 
         public List<Wz_File> wz_files;
-        public List<Ms_File> ms_files;
+        public List<IMapleStoryFile> ms_files;
         public Wz_Crypto encryption;
         public Wz_Node WzNode;
         public int img_number;
@@ -32,7 +32,7 @@ namespace WzComparerR2.WzLib
         public Encoding TextEncoding { get; set; }
         public bool AutoDetectExtFiles { get; set; }
         public bool ImgCheckDisabled { get; set; }
-        public WzVersionVerifyMode WzVersionVerifyMode { get; set; }
+        public WzVersionVerifyMode WzVersionVerifyMode {get;set;}
 
         public void Clear()
         {
@@ -41,9 +41,9 @@ namespace WzComparerR2.WzLib
                 f.Close();
             }
             this.wz_files.Clear();
-            foreach (Ms_File f in this.ms_files)
+            foreach (IMapleStoryFile f in this.ms_files)
             {
-                f.Close();
+                f.Dispose();
             }
             this.ms_files.Clear();
             this.encryption.Reset();
@@ -80,13 +80,13 @@ namespace WzComparerR2.WzLib
             calculate_img_count();
         }
 
-        public Wz_File LoadFile(string fileName, Wz_Node node, bool useBaseWz = false, bool loadWzAsFolder = false, string fallbackFileName = null)
+        public Wz_File LoadFile(string fileName, Wz_Node node, bool useBaseWz = false, bool loadWzAsFolder = false)
         {
             Wz_File file = null;
 
             try
             {
-                file = new Wz_File(fileName, this, fallbackFileName);
+                file = new Wz_File(fileName, this);
                 if (!file.Loaded)
                 {
                     throw new Exception("The file is not a valid wz file.");
@@ -100,7 +100,7 @@ namespace WzComparerR2.WzLib
                 node.Value = file;
                 file.Node = node;
                 file.FileStream.Position = file.Header.DataStartPosition;
-                file.GetDirTree(node, useBaseWz, loadWzAsFolder, fileName, fallbackFileName);
+                file.GetDirTree(node, useBaseWz, loadWzAsFolder);
                 file.Header.DirEndPosition = file.FileStream.Position;
                 file.DetectWzType();
                 file.DetectWzVersion();
@@ -153,13 +153,13 @@ namespace WzComparerR2.WzLib
             }
         }
 
-        public void LoadKMST1125DataWz(string fileName, string fallbackFileName = null)
+        public void LoadKMST1125DataWz(string fileName)
         {
-            LoadWzFolder(Path.GetDirectoryName(fileName), ref this.WzNode, true, fallbackFileName == null ? null : Path.GetDirectoryName(fallbackFileName));
+            LoadWzFolder(Path.GetDirectoryName(fileName), ref this.WzNode, true);
             calculate_img_count();
         }
 
-        public bool IsKMST1125WzFormat(string fileName, string fallbackFileName = null)
+        public bool IsKMST1125WzFormat(string fileName)
         {
             if (!string.Equals(Path.GetExtension(fileName), ".wz", StringComparison.OrdinalIgnoreCase))
             {
@@ -167,17 +167,13 @@ namespace WzComparerR2.WzLib
             }
 
             string iniFile = Path.ChangeExtension(fileName, ".ini");
-            if (!File.Exists(iniFile) && fallbackFileName != null)
-            {
-                iniFile = Path.ChangeExtension(fallbackFileName, ".ini");
-            }
             if (!File.Exists(iniFile))
             {
                 return false;
             }
 
             // check if the file is an empty wzfile
-            using (var file = new Wz_File(fileName, this, fallbackFileName))
+            using (var file = new Wz_File(fileName, this))
             {
                 if (!file.Loaded)
                 {
@@ -194,21 +190,15 @@ namespace WzComparerR2.WzLib
             }
         }
 
-        public void LoadWzFolder(string folder, ref Wz_Node node, bool useBaseWz = false, string fallbackFolder = null)
+        public void LoadWzFolder(string folder, ref Wz_Node node, bool useBaseWz = false)
         {
             string baseName = Path.Combine(folder, Path.GetFileName(folder));
-            string fallbackBaseName = fallbackFolder == null ? null : Path.Combine(fallbackFolder, Path.GetFileName(fallbackFolder));
             string entryWzFileName = Path.ChangeExtension(baseName, ".wz");
             string iniFileName = Path.ChangeExtension(baseName, ".ini");
             Func<int, string> extraWzFileName = _index => Path.ChangeExtension($"{baseName}_{_index:D3}", ".wz");
-            Func<int, string> fallbackExtraWzFileName = _index => Path.ChangeExtension($"{fallbackBaseName}_{_index:D3}", ".wz");
 
             // load iniFile
             int? lastWzIndex = null;
-            if (!File.Exists(iniFileName))
-            {
-                iniFileName = Path.ChangeExtension(fallbackBaseName, ".ini");
-            }
             if (File.Exists(iniFileName))
             {
                 var iniConf = File.ReadAllLines(iniFileName).Select(row =>
@@ -230,8 +220,7 @@ namespace WzComparerR2.WzLib
                 for (int i = 0; ; i++)
                 {
                     string extraFile = extraWzFileName(i);
-                    string fallbackExtraFile = fallbackExtraWzFileName(i);
-                    if (!File.Exists(extraFile) && !File.Exists(fallbackExtraFile))
+                    if (!File.Exists(extraFile))
                     {
                         break;
                     }
@@ -244,7 +233,7 @@ namespace WzComparerR2.WzLib
             {
                 node = new Wz_Node(Path.GetFileName(entryWzFileName));
             }
-            var entryWzf = this.LoadFile(entryWzFileName, node, useBaseWz, true, Path.ChangeExtension(fallbackBaseName, ".wz"));
+            var entryWzf = this.LoadFile(entryWzFileName, node, useBaseWz, true);
 
             // load extra file
             if (lastWzIndex != null)
@@ -252,9 +241,8 @@ namespace WzComparerR2.WzLib
                 for (int i = 0, j = lastWzIndex.Value; i <= j; i++)
                 {
                     string extraFile = extraWzFileName(i);
-                    string fallbackExtraFile = fallbackExtraWzFileName(i);
                     var tempNode = new Wz_Node(Path.GetFileName(extraFile));
-                    var extraWzf = this.LoadFile(extraFile, tempNode, false, true, fallbackExtraFile);
+                    var extraWzf = this.LoadFile(extraFile, tempNode, false, true);
 
                     /*
                      * there is a little hack here, we'll move all img to the entry file, and each img still refers to the original wzfile.
@@ -284,26 +272,63 @@ namespace WzComparerR2.WzLib
 
         private void LoadMsFile(string fileName, ref Wz_Node node)
         {
-            Ms_File file = null;
+            List<Exception> exceptions = new(2);
             if (node == null)
             {
                 node = new Wz_Node(Path.GetFileName(fileName));
             }
-            try
+
+            bool loaded = false;
+            // try ms file v1
+            if (!loaded)
             {
-                file = new Ms_File(fileName, this);
-                file.ReadEntries();
-                file.GetDirTree(node);
-                this.ms_files.Add(file);
-            }
-            catch
-            {
-                if (file != null)
+                Ms_File file = null;
+                try
                 {
-                    file.Close();
-                    this.ms_files.Remove(file);
+                    file = new Ms_File(fileName, this);
+                    file.ReadEntries();
+                    file.GetDirTree(node);
+                    this.ms_files.Add(file);
+                    loaded = true;
                 }
-                throw;
+                catch(Exception ex)
+                {
+                    if (file != null)
+                    {
+                        file.Close();
+                        this.ms_files.Remove(file);
+                    }
+                    exceptions.Add(ex);
+                }
+            }
+
+            // try ms file v2
+            if (!loaded)
+            {
+                Ms_FileV2 file = null;
+                try
+                {
+                    file = new Ms_FileV2(fileName, this);
+                    file.ReadEntries();
+                    file.GetDirTree(node);
+                    this.ms_files.Add(file);
+                    loaded = true;
+                }
+                catch (Exception ex)
+                {
+                    if (file != null)
+                    {
+                        file.Close();
+                        this.ms_files.Remove(file);
+                    }
+                    exceptions.Add(ex);
+                }
+            }
+            
+            // return errors
+            if (!loaded)
+            {
+                throw new AggregateException("Failed to load ms files.", exceptions.ToArray());
             }
         }
 
