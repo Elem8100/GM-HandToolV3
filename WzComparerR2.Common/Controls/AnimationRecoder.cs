@@ -118,10 +118,6 @@ namespace WzComparerR2.Controls
                 {
                     _graphics.Draw(spineAni, world);
                 }
-                else if (animation is MultiFrameAnimator multiFrameAni)
-                {
-                    _graphics.Draw(multiFrameAni, world);
-                }
             }
         }
 
@@ -262,65 +258,6 @@ namespace WzComparerR2.Controls
                 else if (animation is ISpineAnimator)
                 {
                     return null;
-                }
-                else if (animation is MultiFrameAnimator multiFrameAni)
-                {
-                    // we won't skip any frame even frame delay is greater than preferred delay
-                    var timeline = new List<int>();
-                    int totalLength = 0;
-                    foreach (var frame in multiFrameAni.GetKeyFrames())
-                    {
-                        totalLength += frame.Length;
-                        if (frame.Animated)
-                        {
-                            for (int ms = frame.Length; ms > 0;)
-                            {
-                                if (ms >= preferredFrameDelay)
-                                {
-                                    timeline.Add(preferredFrameDelay);
-                                    ms -= preferredFrameDelay;
-                                }
-                                else
-                                {
-                                    if (timeline.Count > 0)
-                                    {
-                                        timeline[timeline.Count - 1] += ms;
-                                    }
-                                    else
-                                    {
-                                        // duration of the first frame less than minFrameDelay, but we can't simply ignore it.
-                                        timeline.Add(ms);
-                                    }
-                                    ms = 0;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (maxFrameDelay != null)
-                            {
-                                for (int ms = frame.Length; ms > 0;)
-                                {
-                                    if (ms >= maxFrameDelay.Value)
-                                    {
-                                        timeline.Add(maxFrameDelay.Value);
-                                        ms -= maxFrameDelay.Value;
-                                    }
-                                    else
-                                    {
-                                        timeline.Add(ms);
-                                        ms = 0;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                timeline.Add(frame.Length);
-                            }
-                        }
-                    }
-
-                    return timeline.ToArray();
                 }
             }
 
